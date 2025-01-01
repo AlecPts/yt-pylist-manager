@@ -1,61 +1,55 @@
 import tkinter as tk
 
-from model.playlist import Playlist
-
-#import main
-#from view import PlaylistView
-
-
 class Window(tk.Tk):
-    def __init__(self):
-
+    def __init__(self, playlist):
         # Main setup
         super().__init__()
-        self.title("My YouTube playlist")
-        self.geometry("800x500")
-
-        # Initialize playlist view
-        #self.playlist_menu = PlaylistView(self)
-
+        self.title("My YouTube Playlist")
+        #self.geometry("800x500")
+        self.configure(padx=10, pady=10)
+        self.playlist = playlist  # Référence au contrôleur
 
         ## CONTROL FRAME
-        controls_frame = tk.Frame(self)
-        controls_frame.pack()
+        #controls_frame = tk.Frame(self)
+        #controls_frame.pack()
+
+        # Add video entry
+        self.entry_video = tk.Entry(self)
+        self.entry_video.grid(row=0, column=0)
 
 
-        ## BUTTON
-        # Create the add button
-        self.btn_add = tk.Button(controls_frame, text="Add")
-        self.btn_add.grid(row=0, column=0, padx=10)
+        # Button
+        self.btn_add = tk.Button(self, text="Add", command=self.add_video)
+        self.btn_add.grid(row=0, column=1)
+
+        self.btn_remove = tk.Button(self, text="Remove", command=self.remove_video)
+        self.btn_remove.grid(row=0, column=2)
 
 
-        # Initialiaze playlist data
-        self.pl = Playlist()
-        self.pl.add("https://youtu.be/rrrbO-MaerM?si=VHbSvdLtzcV602Dc")
-        self.pl.add("https://youtu.be/rrrbO-MaerM?si=VHbSvdLtzcV602Dc")
-        self.pl.add("https://youtu.be/rrrbO-MaerM?si=VHbSvdLtzcV602Dc")
-        self.pl.add("https://youtu.be/rrrbO-MaerM?si=VHbSvdLtzcV602Dc")
-        self.pl.add("https://youtu.be/rrrbO-MaerM?si=VHbSvdLtzcV602Dc")
-
-        # Create the listbox
+        # Listbox for displaying playlist
         self.listbox = tk.Listbox(self)
-        self.listbox.pack(fill="x", padx=10, pady=10)
-
-        # Fill the playlist
-        self.fill_playlist()
-
-        # Run
-        self.mainloop()
+        self.listbox.grid(row=1, column=0, columnspan=3, pady=(10, 0))
+        #self.listbox.pack(fill="none")
+        self.listbox.configure(width=50)
 
 
+    def add_video(self):
+        video_url = self.entry_video.get()
+        if video_url:
+            self.playlist.add(video_url)  # Add video to linked list
+            self.entry_video.delete(0, tk.END)
+            self.fill_playlist()
 
-    # Function that recover videos from the list and displays them in the playlist
+    def remove_video(self):
+        video_to_remove = self.listbox.curselection()[0] + 1
+        if video_to_remove:
+            self.playlist.remove(video_to_remove)
+            self.fill_playlist()
+
     def fill_playlist(self):
-        video_pos = 1
+        self.listbox.delete(0, tk.END)
 
-        while self.pl.access_by_position(video_pos) is not None:
-            self.listbox.insert(tk.END, self.pl.access_by_position(video_pos))
-            video_pos += 1
-
-
-
+        nb_video = 1
+        while self.playlist.access_by_position(nb_video):
+            self.listbox.insert(tk.END, self.playlist.access_by_position(nb_video))
+            nb_video += 1

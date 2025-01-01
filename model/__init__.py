@@ -1,0 +1,1 @@
+from model.linked_list import LinkedList

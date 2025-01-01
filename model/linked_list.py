@@ -1,29 +1,74 @@
-class Playlist:
+class LinkedList:
 
-    class Video:
-
+    class NewNode:
+        # Initialize Node
         def __init__(self, val):
             self._value = val
             self._next = None
 
+    # Initialize class
     def __init__(self):
         self._first = None
         self._last = None
         self._nb_elt = 0
 
-    # Function to add a video to the playlist
+
     def add(self, val):
-        new_video = Playlist.Video(val)
+        new_node = self.NewNode(val)
 
         if self._nb_elt == 0:
-            self._first = new_video
+            self._first = new_node
         else:
-            self._last._next = new_video
+            self._last._next = new_node
             
-        self._last = new_video
+        self._last = new_node
         self._nb_elt += 1
 
-    # Function to access a video via its position in the playlist
+        ## DEBUG
+        for elt in range(self._nb_elt):
+            print(self.access_by_position(elt + 1))
+
+
+    def remove(self, pos):
+        # Check empty list
+        if self._first is None:
+            raise ValueError("ERROR : List is empty")
+
+        # Check invalid position
+        if pos < 1 or pos > self._nb_elt:
+            raise IndexError("ERROR : Position value out of range")
+
+        previous = None
+        current = self._first
+        counter = 1
+
+        while pos > counter:
+            previous = current
+            current = current._next
+            counter += 1
+
+        removed_val = current._value
+
+        # Remove node
+        if previous is None:  # Remove first node
+            self._first = current._next
+        else:
+            previous._next = current._next
+
+        # Update last node
+        if current == self._last:
+            self._last = previous
+
+        # Update number of element
+        self._nb_elt = self._nb_elt - 1
+
+        ## DEBUG
+        for elt in range(self._nb_elt):
+            print(self.access_by_position(elt + 1))
+
+        return removed_val
+
+
     def access_by_position(self, pos):
         val_index = None
         
@@ -65,32 +110,6 @@ class Playlist:
             counter += 1
             
         return counter
-
-
-    # Function to remove a video from the playlist
-    def remove(self, pos):
-        previous = None
-        current = self._first
-        counter = 1
-
-        while pos > counter:
-            previous = current
-            current = current._next
-            counter += 1
-
-        removed_val = current._value
-
-        if previous == None:
-            self._first = current._next
-        else:
-            previous._next = current._next
-
-        if current == self._last:
-            self._last = previous
-
-        self._nb_elt = self._nb_elt - 1
-
-        return removed_val
 
 
     """
